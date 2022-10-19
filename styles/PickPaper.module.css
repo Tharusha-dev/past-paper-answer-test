@@ -1,0 +1,41 @@
+.pick_paper {
+    display: flex;
+    margin: 6vh 10.31vw 0 10.31vw;
+    
+
+}
+
+.sorting_menu {
+    width: 20.72vw;
+    height: 100vh;
+    padding: 5%;
+    box-sizing: border-box;
+    border-radius: 2em;
+    background-color: var(--accent-blue);
+}
+
+.sorting_menu_selector {
+    font-size: 1.49em;
+    font-weight: 500;
+    color: var(--primary-gray);
+}
+
+.drop_down {
+    display: flex;
+    /* width: calc(100% + 30%); */
+    /* width: max-content; */
+    /* padding-right: 16%; */
+    width: 107%;
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
+    margin-top: 1em;
+    padding-left: 0.2em;
+
+    background-color: rgba(251, 252, 255, 1);
+    border-radius: 0.4em;
+
+}
+
+.drop_down span {
+    margin-right: 1.5em;
+}

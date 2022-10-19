@@ -1,0 +1,18 @@
+.main_div {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    /* background-color: red; */
+    /* background-color: rgba(251, 252, 255, 1); */
+    /* background-color: red; */
+    /* margin : 1em; */
+
+    /* width: max-content; */
+    width: 107%;
+
+}
+
+.dropdown_item {
+    /* margin: 1em */
+}
