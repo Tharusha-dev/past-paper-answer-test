@@ -2,7 +2,10 @@ import {useState,useEffect} from 'react'
 import {doc,collection,getDocs,getDoc, query, where} from 'firebase/firestore'
 import {app} from '../firebase-config'
 import {getStorage,ref,getDownloadURL} from 'firebase/storage'
+import QuestionAnswerView from './QuestionAnswerView'
 import {styles} from '../styles/select_answer_card.module.css'
+
+
 
 const firebaseStorage = getStorage(app)
 
@@ -10,10 +13,15 @@ function SelectAnswerCard(props) {
 
   const [docs,setDocs] = useState([])
   const [imageUrl,setImageUrl] = useState('')
+  const [isAnswerViewOpen,setAnswerViewOpen] = useState(false)
   // let imageUrl
 
   async function getAnswers(){
-    const q = query(props.answerLoc, where("question","==",1))
+    console.log("********************")
+
+    const q = query(props.answerLoc, where("question","==",props.questionNum + 1))
+
+
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
@@ -33,16 +41,16 @@ function SelectAnswerCard(props) {
   },[])
   return (
    
-    <div style={{overflow:'scroll',position:'absolute',backgroundColor:'rgba(232, 232, 232, 1)',display:'flex'}}>
-    {docs.map((doc,index)=>{
+    <div style={{overflow:'hidden',position:'absolute',backgroundColor:'rgba(232, 232, 232, 1)',display:'flex'}}>
+    {isAnswerViewOpen ? <></> : docs.map((doc,index)=>{
       console.log(doc)
       getDownloadURL(ref(firebaseStorage,doc.data()['answer_image'])).then((downUrl)=>{
         setImageUrl(downUrl)
       })
-      return <div key={index} style={{margin:'1vw',padding:'0.8em',backgroundColor:'white',borderRadius:'1em'}}>
+      return <div onClick={()=>{setAnswerViewOpen(true)}} key={index} style={{overflow:'hidden',margin:'1vw',padding:'0.8em',backgroundColor:'white',borderRadius:'1em'}}>
         <img style={{height:'30vw',borderRadius:'1em'}} src={imageUrl}></img>
-        <div style={{position:'absolute',zIndex:'10000',bottom:'2em',fontSize:'1.8em',display:'flex',color:'white'}}>
-        <span>{`${doc.data()['user']}'s answer`}</span>
+        <div style={{position:'absolute',overflow:'hidden',bottom:'2em',fontSize:'1.8em',display:'flex',color:'white'}}>
+        <span>{`${doc.data()['user_info']['name']}'s answer`}</span>
         <div style={{marginLeft:'30%'}}>
         <LikeIcon />
         <span>{doc.data()['like_count']}</span>
@@ -53,7 +61,11 @@ function SelectAnswerCard(props) {
       </div>
     })}
 
+      {isAnswerViewOpen ? <QuestionAnswerView imageUrl={imageUrl}/> : <span>none</span>}
+
     </div>
+
+    
     
   )
   

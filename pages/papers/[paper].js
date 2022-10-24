@@ -1,14 +1,21 @@
 import { useRouter } from "next/router";
 
 import {app, db} from '../../firebase-config'
-import {getStorage,ref,getDownloadURL , list} from 'firebase/storage'
+import {getStorage,ref,getDownloadURL , list, listAll} from 'firebase/storage'
 import {doc,collection,getDocs,getDoc, query, where} from 'firebase/firestore'
 
 import React, { useState , useEffect } from 'react'
 import styles from '../../styles/PaperView.module.css'
 import SelectAnswerCard from "../../components/SelectAnswerCard";
+import QuestionAnswerView from '../../components/QuestionAnswerView'
+
+
 console.log("lets see")
 
+function openAnswerView(){
+  setAnswerCardOpen(false)
+  setAnswerViewOpen(true)
+}
 
 
 function PaperView() {
@@ -22,7 +29,12 @@ function PaperView() {
   const [questionImages2,setQuestionImages2] = useState([])
   const [isLoading,setLoading] = useState(true)
   const [testList,setTestList] = useState([1,2,3])
+
   const [isAnswerCardOpen,setAnswerCardOpen] = useState(false)
+  const [isAnswerViewOpen,setAnswerViewOpen] = useState(false)
+
+  const [answerSelected,setAnswerSelected] = useState(0)
+
   const [isViewPaperButton,setViewPaperButton] = useState(true)
   let querySnapshot
 
@@ -49,11 +61,11 @@ function PaperView() {
 
       console.log("refres")
 
-    const result = await (await list(storageFolder, {maxResults: 10})).items
+    const result = await (await listAll(storageFolder)).items
 
       console.log(result[0].fullPath)
 
-      result.forEach((url)=>{
+      result.forEach((url,index)=>{
         // console.log(url.fullPath)
         getDownloadURL(ref(firebaseStorage,url.fullPath)).then((downUrl)=>{
           // console.log(downUrl)
@@ -61,7 +73,7 @@ function PaperView() {
           num = parseInt(num[num.length-1].replace('.png?alt',''))
           // questionImages2[]
           questionImages2[questionImages2.length] = num
-          questionImages[questionImages.length] = downUrl
+          questionImages[index] = downUrl
 
           setQuestionImages([...questionImages])
           setQuestionImages2([...questionImages2])
@@ -72,12 +84,12 @@ function PaperView() {
         // setLoading(false)
 
       }) 
+
+
+
+
       setTestList([5,6,7])
 
-
-      // sort(questionImages)
-      // console.log(questionImages)
-      // console.log(questionImages2)
 
       const mapped = questionImages.map((image,i)=>({image:questionImages2[i]}))
       const merged = questionImages.map((question, i) => ({question, 'answer' : questionImages2[i]}));
@@ -92,14 +104,6 @@ function PaperView() {
   function sort(array){
     let paper_ = "temp" 
     let numList = [1,2,3]
-    // array.forEach((result)=>{
-    //   // paper_ = result.fullPath.split('?')[0].split('_')
-    //   // paper_ = parseInt(paper_[paper_.length-1].replace('.png',''))
-    //   paper_ = result
-      
-    //   numList.push(paper_)
-    
-    // })
 
     numList = array.length
 
@@ -108,34 +112,25 @@ function PaperView() {
   }
 
 
-    
-    
-    // console.log('++++++++++++++++++++++++++++++++++++')
-    // console.log(questionImages)
-    // console.log('++++++++++++++++++++++++++++++++++++')
 
-    // useEffect(()=>{setQuestionImages([...questionImages])},[isLoading]) 
 
     return (
-    <div onClick={()=>{
-      if(isAnswerCardOpen){
-        setAnswerCardOpen(false)
-      }
-    }} style={{display:'grid',placeItems:'center',height:'100vh'}}>
+    <div  style={{display:'grid',placeItems:'center',height:'100vh'}}>
 
       
        {isViewPaperButton ? <button style={{height:'10vw',width:'10vw'}} onClick={()=>{getImages();console.log(questionImages);setViewPaperButton(false)}}>View Paper</button> : <></>}
        {questionImages.map((url,index)=>{return <div key={index} style={{margin:'1em',borderRadius:'1em',border:'0.2em solid rgba(135, 181, 255, 1)'}}><img onClick={async ()=>{console.log(questionImages2[index])
        setAnswerCardOpen(true)
+       setAnswerSelected(index)
+       console.log(answerSelected)
 
-      //  querySnapshot.forEach((doc) => {
-      //    // doc.data() is never undefined for query doc snapshots
-      //    console.log(doc.id, " => ", doc.data());
-      //  });
+ 
 
        }} style={{'marginTop':'2vw'}} key={index} src={url}></img></div>}) }
       {/* {console.log(answersLocation)} */}
-      {isAnswerCardOpen ? <SelectAnswerCard answerLoc={answersLocation}/> : <></>}
+      {isAnswerCardOpen ? <SelectAnswerCard viewOpen={setAnswerViewOpen} answerLoc={answersLocation} questionNum = {answerSelected}/> : <></>}
+
+      {/* {isAnswerViewOpen ? <QuestionAnswerView/> : <span>none</span>} */}
 
     </div>
     

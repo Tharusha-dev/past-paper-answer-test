@@ -18,7 +18,7 @@ const test_list = [1,2,3]
 // let paper_icons = [2]
 
 const collectionRef = collection(db,'papers')
-const docRef = doc(db,'/papers/GCE_AL/2022/lRuNqfjF2babmteANtLs')
+// const docRef = doc(db,'/papers/GCE_AL/2022/lRuNqfjF2babmteANtLs')
 
 
 GetData()
@@ -103,24 +103,7 @@ export default function PickPaper() {
                 <div className={styles.drop_down}>
                     <span>2021</span>
                     <DropDownIcon click={setExamYearMenuOpen} bool={examYearMenuOpen}/>
-                {examYearMenuOpen ? <Dropdownfilter list={
-                //   ()=>{
-                //   // switch(examSelected){
-                //   //   case 0 : 
-                //   //     return ["one","one"] 
-                //   //     break
-                //   //   case 1 : 
-                //   //     return ["two","two"]; 
-                //   //     break
-                //   //   case 2:
-                //   //     return ["three","three"];
-                //   //     break
-                //   //   default: return ["none","none"]
-                //   // }
-                //   return [1,2,3]
-                // }
-                ttttt(examSelected)
-                }  click={setYearSelected}/> : <></>}
+                {examYearMenuOpen ? <Dropdownfilter list={ttttt(examSelected)}  click={setYearSelected}/> : <></>}
 
 
 
@@ -164,8 +147,8 @@ export default function PickPaper() {
  }
  async function GetData(){
  
-  const data = await getDocs(collectionRef);
-  const data_doc = await getDoc(docRef);
+  // const data = await getDocs(collectionRef);
+  // const data_doc = await getDoc(docRef);
 
   test_names = await getDocs(collectionRef)
   // const gghg = await getDocs(collectionRef)

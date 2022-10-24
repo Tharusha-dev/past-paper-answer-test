@@ -1,0 +1,15 @@
+.main_div {
+    /* position: absolute; */
+    /* right: 0; */
+    height: 40vw;
+    /* background-color: rgba(232, 232, 232, 1); */
+    width: 80vw;
+    /* background-color: red; */
+    border-radius: 1em;
+
+}
+.main_div img {
+    height: 100%;
+    width: 100%;
+    border-radius: 1em;
+}

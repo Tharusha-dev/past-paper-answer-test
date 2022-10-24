@@ -7,5 +7,6 @@
     --primary-gray:rgba(82, 82, 82, 1);
     font-family: 'Poppins';
     font-size: 0.87vw;
+    overflow: hidden;
 
   }
