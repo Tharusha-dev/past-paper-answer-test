@@ -6,7 +6,7 @@ import Dropdownfilter from '../components/DropDownFilter'
 import { db,app } from '../firebase-config';
 import {collection,addDoc,getDocs} from 'firebase/firestore'
 import { getStorage,ref,uploadBytes } from 'firebase/storage';
-import {GoogleAuthProvider , getAuth , signInWithPopup} from 'firebase/auth'
+import {GoogleAuthProvider , getAuth , signInWithPopup , browserLocalPersistence , setPersistence} from 'firebase/auth'
 import {v4 as uuidv4} from 'uuid'
 
 
@@ -62,8 +62,14 @@ function Upload_paper() {
     const [paperSelected,setPaperSelected] = useState(0)
     const [questionNumber,setQuestionNumber] = useState(1)
 
+    const [userDetails,setUserDetails] = useState({'name':'loading','profile-pic':'https://media.giphy.com/media/3o7bu3XilJ5BOiSGic/giphy.gif'})
+    const [isSignedIn,setSignedIn] = useState(false)
+    
     const authProvider = new GoogleAuthProvider()
     const auth = getAuth();
+    setPersistence(auth,browserLocalPersistence).then(()=>{
+      // return signInWithPopup(auth,authProvider)
+    })
 
 
 
@@ -190,29 +196,35 @@ function Upload_paper() {
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
-    // async function GetData(){
- 
-    //     const data = await getDocs(collectionRef);
-    //     const data_doc = await getDoc(docRef);
-      
-    //     test_names = await getDocs(collectionRef)
-    //     // const gghg = await getDocs(collectionRef)
-    //     // gghg.docs.forEach((doc)=>{doc.id})
-      
-        
-    //     test_names.docs.forEach((doc)=>{test_names_list.push(doc.data()['name'])})
-    //     console.log("runned")
-    //     // console.log(test_names_list)
-      
-    //     // return test_names_list
-      
-    //   }
-  return (
+    function isUser(){
+      if(auth.currentUser != null){
+        console.log("current user is not null")
+        console.log(auth.currentUser.uid)
+        // setUserDetails({'name':auth.currentUser})
+        // return auth.currentUser.displayName
+      }
+      else {
+        console.log("current user is null")
+
+      }
+    }
+
+    useEffect(()=>{
+      if(auth.currentUser != null){
+        setUserDetails({'name':auth.currentUser.displayName,'profile-pic':auth.currentUser.photoURL})
+        setSignedIn(true)
+      }
+    },[auth.currentUser])
+
+
+    isUser()
+
+    return (
     <div className={styles.main}>
         <h1 className={styles.main_heading}>Upload Answers</h1>
 
 
-        <button className={styles.submit_button} onClick={()=>{auth.signOut();signInWithGoogle()}}>Sign In</button>
+        {isSignedIn ? <></> : <button className={styles.submit_button} onClick={()=>{signInWithGoogle()}}>Sign In</button>}
 
 
         <span style={{fontSize:'2em',marginLeft:'1em'}}>Select the paper you want to answer</span>
@@ -254,15 +266,11 @@ function Upload_paper() {
       <span style={{marginLeft:'1.1em',fontSize:'1.5em'}}>Enter the answer number</span>
       <input style={{width:'max-content',marginLeft:'2em'}} onChange={(e)=>{setQuestionNumber(e.target.value)}} type="number" ></input>
 
-      {()=>{
-        if(auth.currentUser != null){
-          return auth.currentUser.displayName
-        }
-      }}
 
-      {/* <button onClick={()=>{console.log(auth.currentUser)}}></button>
-      <button onClick={()=>{auth.signOut()}}>out</button> */}
 
+      {userDetails['name']}
+
+      {<img style={{width:'5%'}} src={userDetails['profile-pic']}></img>}
 
 
                 

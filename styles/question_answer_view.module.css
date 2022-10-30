@@ -1,15 +1,41 @@
 .main_div {
     /* position: absolute; */
-    /* right: 0; */
-    height: 40vw;
-    /* background-color: rgba(232, 232, 232, 1); */
-    width: 80vw;
+    right: 5%;
+    height: 42vw;
+    width: auto;
+    
+    background-color: var(--primary-blue);
+    padding: 1em;
+    padding-bottom: 5em;
+    /* width: 80vw; */
     /* background-color: red; */
     border-radius: 1em;
 
 }
 .main_div img {
     height: 100%;
-    width: 100%;
+    width: auto;
     border-radius: 1em;
+}
+
+.answer_info {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5em;
+    align-content: center;
+    align-items: center;
+    font-size: 1.8em;
+    font-weight:600;
+    color: black;
+
+}
+
+.answer_info img {
+    margin-right: 0.5em;
+}
+
+.like_icon {
+    margin-left:2em;
+    margin-right: 0.5em;
+    /* height: 1em; */
 }

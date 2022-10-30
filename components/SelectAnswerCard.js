@@ -1,5 +1,5 @@
 import {useState,useEffect} from 'react'
-import {doc,collection,getDocs,getDoc, query, where} from 'firebase/firestore'
+import {doc,collection,getDocs,getDoc, query, where } from 'firebase/firestore'
 import {app} from '../firebase-config'
 import {getStorage,ref,getDownloadURL} from 'firebase/storage'
 import QuestionAnswerView from './QuestionAnswerView'
@@ -13,8 +13,12 @@ function SelectAnswerCard(props) {
 
   const [docs,setDocs] = useState([])
   const [imageUrl,setImageUrl] = useState('')
+  const [imageUrl2,setImageUrl2] = useState([])
+  const [answerClicked,setAnswerClicked] = useState(0)
   const [isAnswerViewOpen,setAnswerViewOpen] = useState(false)
   // let imageUrl
+
+  let tesImg;
 
   async function getAnswers(){
     console.log("********************")
@@ -24,11 +28,26 @@ function SelectAnswerCard(props) {
 
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
+      
       // doc.data() is never undefined for query doc snapshots
       docs[docs.length] = doc
+      
+      
       setDocs([...docs])
       // console.log(doc.id, " => ", doc.data());
     });
+
+    docs.forEach((doc,index)=>{
+      console.log('done chane')
+  
+      getDownloadURL(ref(firebaseStorage,doc.data()['answer_image'])).then((downUrl)=>{
+        tesImg = downUrl
+        imageUrl2[index] = downUrl
+        setImageUrl2([...imageUrl2])
+        // console.log(tesImg)
+    
+      })
+    })
 
 
   }  
@@ -39,31 +58,44 @@ function SelectAnswerCard(props) {
     getAnswers()
 
   },[])
-  return (
-   
-    <div style={{overflow:'hidden',position:'absolute',backgroundColor:'rgba(232, 232, 232, 1)',display:'flex'}}>
-    {isAnswerViewOpen ? <></> : docs.map((doc,index)=>{
-      console.log(doc)
-      getDownloadURL(ref(firebaseStorage,doc.data()['answer_image'])).then((downUrl)=>{
-        setImageUrl(downUrl)
-      })
-      return <div onClick={()=>{setAnswerViewOpen(true)}} key={index} style={{overflow:'hidden',margin:'1vw',padding:'0.8em',backgroundColor:'white',borderRadius:'1em'}}>
-        <img style={{height:'30vw',borderRadius:'1em'}} src={imageUrl}></img>
-        <div style={{position:'absolute',overflow:'hidden',bottom:'2em',fontSize:'1.8em',display:'flex',color:'white'}}>
-        <span>{`${doc.data()['user_info']['name']}'s answer`}</span>
-        <div style={{marginLeft:'30%'}}>
-        <LikeIcon />
-        <span>{doc.data()['like_count']}</span>
-        </div>
 
-        </div>
- 
+
+  // useEffect(()=>{
+  //   setImageUrl(tesImg)
+  //   console.log('changed')
+  //   console.log(tesImg)
+  // },[tesImg])
+
+
+
+
+
+  return (
+   <>
+    <div style={{position:'absolute',backgroundColor:'rgba(232, 232, 232, 1)',display:'flex',overflow:'scroll',width:'100vw'}}>
+
+
+    {imageUrl2.map((image,index)=>{
+      // console.log('rendered')
+      return <div onClick={()=>{setAnswerViewOpen(true);setAnswerClicked(index)}} key={index} style={{margin:'1vw',padding:'0.8em',backgroundColor:'white',borderRadius:'1em'}}>
+      <img style={{height:'30vw',borderRadius:'1em'}} src={image}></img>
+      <div style={{position:'absolute',bottom:'2em',fontSize:'1.8em',display:'flex',color:'white',width:'max-content'}}>
+      <span>{`${docs[index].data()['user_info']['name']}'s answer`}</span>
+      <div style={{marginLeft:'30%'}}>
+      <LikeIcon />
+      
+      <span>{docs[index].data()['like_count']}</span>
+      </div>
+
+      </div>
       </div>
     })}
 
-      {isAnswerViewOpen ? <QuestionAnswerView imageUrl={imageUrl}/> : <span>none</span>}
+      
 
     </div>
+    {isAnswerViewOpen ? <div style={{position:'absolute'}}><QuestionAnswerView info={docs[answerClicked]} imageUrl={imageUrl2[answerClicked]}/></div> : <span></span>}
+    </>
 
     
     
